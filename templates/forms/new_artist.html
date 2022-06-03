@@ -1,8 +1,22 @@
 {% extends 'layouts/main.html' %}
 {% block title %}New Artist{% endblock %}
 {% block content %}
+<div class="col-md-8">
+  {% with messages = get_flashed_messages(with_categories=true) %} 
+  {% if messages %}
+  {% for category, message in messages %}
+  <div class="alert alert-{{category}}">
+    {{message}}
+  </div>
+
+  {% endfor %}
+  {% endif %}
+  {% endwith %}
+</div>
   <div class="form-wrapper">
-    <form method="post" class="form">
+    <form method="post" action="" class="form">
+    {{form.hidden_tag()}}
+
       <h3 class="form-heading">List a new artist</h3>
       <div class="form-group">
         <label for="name">Name</label>
@@ -45,7 +59,7 @@
 
           <div class="form-group">
               <label for="seeking_venue">Looking for Venues</label>
-              {{ form.seeking_venue(placeholder='Venue', autofocus = true) }}
+              {{ form.looking_for_venue(placeholder='Venue', autofocus = true) }}
           </div>
 
           <div class="form-group">

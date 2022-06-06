@@ -57,6 +57,9 @@ class Venue(db.Model):
     seeking_description = db.Column(db.String(120))
     show = db.relationship('Show', backref='venue')
 
+    def __repr__(self):
+      return f'<Venue "{self.name}">'
+
    
 
     # TODO: implement any missing fields, as a database migration using Flask-Migrate
@@ -77,6 +80,10 @@ class Artist(db.Model):
     website_link = db.Column(db.String(120))
     show = db.relationship('Show', backref='artist')
 
+    def __repr__(self):
+      return f'<Artist "{self.name}">'
+
+
     # TODO: implement any missing fields, as a database migration using Flask-Migrate
 
 # TODO Implement Show and Artist models, and complete all model relationships and properties, as a database migration.
@@ -88,7 +95,8 @@ class Show(db.Model):
   venue_id = db.Column(db.Integer, db.ForeignKey('venue.id'), nullable=False)
   start_time = db.Column(db.String(120))
 
-  
+  def __repr__(self):
+    return f'<Show "{self.id}">'
 #----------------------------------------------------------------------------#
 # Filters.
 #----------------------------------------------------------------------------#

@@ -86,7 +86,7 @@ class VenueForm(FlaskForm):
         'phone'
     )
     image_link = StringField(
-        'image_link'
+        'image_link', validators=[URL(message="uh uh! URL required")]
     )
     genres = SelectMultipleField(
         # TODO implement enum restriction
@@ -114,10 +114,10 @@ class VenueForm(FlaskForm):
         ]
     )
     facebook_link = StringField(
-        'facebook_link', validators=[URL()]
+        'facebook_link', validators=[URL(message="uh uh! URL required")]
     )
     website_link = StringField(
-        'website_link'
+        'website_link', validators=[URL(message="uh uh! URL required")]
     )
 
     seeking_talent = BooleanField( 'seeking_talent' )
@@ -224,11 +224,12 @@ class ArtistForm(FlaskForm):
      )
     facebook_link = StringField(
         # TODO implement enum restriction
-        'facebook_link', validators=[URL()]
+        'facebook_link', validators=[URL(message="uh uh! URL required")]
      )
 
     website_link = StringField(
-        'website_link'
+         
+        'website_link', validators=[URL(message="uh uh! URL required")] 
      )
 
     looking_for_venue = BooleanField( 'seeking_venue' )

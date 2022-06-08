@@ -25,9 +25,7 @@ from flask_migrate import Migrate
 app = Flask(__name__)
 moment = Moment(app)
 app.config.from_object('config')
-app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:12345678@localhost:5432/fyyur2'
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-app.debug = True
+
 
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
@@ -39,64 +37,8 @@ migrate = Migrate(app, db)
 #----------------------------------------------------------------------------#
 # Models.
 #----------------------------------------------------------------------------#
+from models import Show, Venue, Artist
 
-
-class Venue(db.Model):
-    __tablename__ = 'venue'
-
-    id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String)
-    city = db.Column(db.String(120))
-    state = db.Column(db.String(120))
-    address = db.Column(db.String(120))
-    genres = db.Column(db.String(120))
-    phone = db.Column(db.String(120))
-    image_link = db.Column(db.String(500))
-    facebook_link = db.Column(db.String(120))
-    seeking_talent = db.Column(db.Boolean, default=False, nullable=False)
-    seeking_description = db.Column(db.String(120))
-    show = db.relationship('Show', backref='venue')
-
-    def __repr__(self):
-      return f'<Venue "{self.name}">'
-
-   
-
-    # TODO: implement any missing fields, as a database migration using Flask-Migrate
-
-class Artist(db.Model):
-    __tablename__ = 'artist'
-
-    id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String)
-    city = db.Column(db.String(120))
-    state = db.Column(db.String(120))
-    phone = db.Column(db.String(120))
-    genres = db.Column(db.String(120))
-    image_link = db.Column(db.String(500))
-    facebook_link = db.Column(db.String(120))
-    seeking_description = db.Column(db.String(120))
-    looking_for_venue = db.Column(db.Boolean, default=False, nullable=False)
-    website_link = db.Column(db.String(120))
-    show = db.relationship('Show', backref='artist')
-
-    def __repr__(self):
-      return f'<Artist "{self.name}">'
-
-
-    # TODO: implement any missing fields, as a database migration using Flask-Migrate
-
-# TODO Implement Show and Artist models, and complete all model relationships and properties, as a database migration.
-
-class Show(db.Model):
-  __tablename__ = 'show'
-  id = db.Column(db.Integer, primary_key=True)
-  artist_id = db.Column(db.Integer, db.ForeignKey('artist.id'), nullable=False)
-  venue_id = db.Column(db.Integer, db.ForeignKey('venue.id'), nullable=False)
-  start_time = db.Column(db.String(120))
-
-  def __repr__(self):
-    return f'<Show "{self.id}">'
 #----------------------------------------------------------------------------#
 # Filters.
 #----------------------------------------------------------------------------#
@@ -125,7 +67,32 @@ def index():
 
 @app.route('/venues')
 def venues():
-  areas= Venue.query.order_by(Venue.state, Venue.city).all()
+  areas= Venue.query.all()
+  # data = []
+  # venue_zone = set()
+  # for zone in areas:
+  #   venue_zone.add(zone.city, zone.state)
+
+  # for venue in venue_zone:
+  #   data.append({
+  #     "city":venue[0],
+  #     "state":venue[1],
+  #     "venues":[]
+  #   })
+
+  #   for show_place in areas:
+  #     num_upcoming_shows = 0
+  #     shows = Show.query.filter_by(venue_id=show_place.id).all()
+
+  #     for show in shows:
+  #       if show.start_time > datetime.now():
+  #         num_upcoming_shows += 1
+      # for input in data:
+      #   if show_place.city == input['city'] and show_place.state == input['venue'].append({
+      #     "id":show_place.id,
+      #     "name":show_place.name,
+      #     "num_upcoming_shows":num_upcoming_shows
+      #   })
   # TODO: replace with real venues data.
   #       num_upcoming_shows should be aggregated based on number of upcoming shows per venue.
   # data=[{
@@ -328,7 +295,7 @@ def search_artists():
 @app.route('/artists/<int:artist_id>')
 def show_artist(artist_id):
   artist = Artist.query.get(artist_id)
-  data = Artist.query.all()
+  # data = Artist.query.all()
   return render_template('pages/show_artist.html', artist=artist)
 
   # shows the artist page with the given artist_id
@@ -542,43 +509,20 @@ def create_artist_submission():
 def shows():
   # displays list of shows at /shows
   # TODO: replace with real venues data.
-  data = Show.query.all()
-  # data=[{
-  #   "venue_id": 1,
-  #   "venue_name": "The Musical Hop",
-  #   "artist_id": 4,
-  #   "artist_name": "Guns N Petals",
-  #   "artist_image_link": "https://images.unsplash.com/photo-1549213783-8284d0336c4f?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=300&q=80",
-  #   "start_time": "2019-05-21T21:30:00.000Z"
-  # }, {
-  #   "venue_id": 3,
-  #   "venue_name": "Park Square Live Music & Coffee",
-  #   "artist_id": 5,
-  #   "artist_name": "Matt Quevedo",
-  #   "artist_image_link": "https://images.unsplash.com/photo-1495223153807-b916f75de8c5?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=334&q=80",
-  #   "start_time": "2019-06-15T23:00:00.000Z"
-  # }, {
-  #   "venue_id": 3,
-  #   "venue_name": "Park Square Live Music & Coffee",
-  #   "artist_id": 6,
-  #   "artist_name": "The Wild Sax Band",
-  #   "artist_image_link": "https://images.unsplash.com/photo-1558369981-f9ca78462e61?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=794&q=80",
-  #   "start_time": "2035-04-01T20:00:00.000Z"
-  # }, {
-  #   "venue_id": 3,
-  #   "venue_name": "Park Square Live Music & Coffee",
-  #   "artist_id": 6,
-  #   "artist_name": "The Wild Sax Band",
-  #   "artist_image_link": "https://images.unsplash.com/photo-1558369981-f9ca78462e61?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=794&q=80",
-  #   "start_time": "2035-04-08T20:00:00.000Z"
-  # }, {
-  #   "venue_id": 3,
-  #   "venue_name": "Park Square Live Music & Coffee",
-  #   "artist_id": 6,
-  #   "artist_name": "The Wild Sax Band",
-  #   "artist_image_link": "https://images.unsplash.com/photo-1558369981-f9ca78462e61?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=794&q=80",
-  #   "start_time": "2035-04-15T20:00:00.000Z"
-  # }]
+  all_shows = Show.query.all()
+  data = []
+
+  for show in all_shows:
+    data.append({
+      'venue_id':show.venue_id,
+      "venue_name":Venue.query.filter_by(id=show.venue_id).first().name,
+      "artist_id":show.artist_id,
+      "artist_name":Artist.query.filter_by(id=show.artist_id).first().name,
+      "artist_image_link":Artist.query.filter_by(id=show.artist_id).first().image_link,
+      "start_time":show.start_time
+          })
+
+  
   return render_template('pages/shows.html', shows=data)
 
 @app.route('/shows/create')
